@@ -5,6 +5,7 @@ import authController from '../controllers/auth.controller.js';
 
 const authRoute = express.Router();
 
-authRoute.post('/register', validate, authController.registerController);
+authRoute.post('/register', validate, authController.register);
+authRoute.get('/verifyRegister', authController.verifyRegister);
 
 export default authRoute
