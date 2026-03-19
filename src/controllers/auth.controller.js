@@ -1,9 +1,10 @@
 import userModel from "../models/userModel.js";
 import sendEmail from "../services/emailService.js";
 import JWT from 'jsonwebtoken'
+import bcrypt from "bcryptjs";
 
 
-export const register = async (req, res) => {
+const register = async (req, res) => {
     try {
 
         const { username, email, password } = req.body;
@@ -52,6 +53,58 @@ export const register = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: err.message, success: false })
     }
+}
+
+const login = async (req, res) => {
+
+    const { username, password } = req.body;
+
+    const user = await userModel.findOne({ username }).select('+password');
+
+    if (!user) return res.status(404).json({
+        message: "Invalid password or username",
+        success: false,
+        err: "User not found with given username"
+    })
+
+
+    if (!user.verified) return res.status(400).json({
+        message: "User not verified",
+        success: false,
+        err: "User not verified"
+    })
+
+    const passwordMatch = bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) return res.status(400).json({
+        message: "Invalid password or username",
+        success: false,
+        err: "Password did not match"
+    })
+
+    const token = JWT.sign({
+        userid: user._id,
+        username: user.username
+    },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    )
+
+
+
+    res.cookie('token', token);
+
+    res.status(200).json({
+        message: "User logged in",
+        success: true,
+        user: {
+            userid: user._id,
+            username: user.username,
+            email: user.email
+        }
+    })
+
+
 }
 
 const verifyRegister = async (req, res) => {
@@ -113,5 +166,24 @@ const verifyRegister = async (req, res) => {
 }
 
 
+const getMe = async (req, res) => {
+    const { userid } = req.user;
 
-export default { register, verifyRegister }
+    const user = await userModel.findById(userid)
+
+    if (!user) return res.status(404).json({
+        message: "User not found",
+        success: false,
+        err: "User not found with provided token"
+    })
+
+
+    res.status(200).json({
+        message: "Fetched user details",
+        success: true,
+        user
+    })
+}
+
+
+export default { register, login, verifyRegister, getMe }
