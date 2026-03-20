@@ -1,6 +1,4 @@
 import JWT from 'jsonwebtoken'
-import userModel from '../models/userModel.js';
-
 
 const verifyUser = async (req, res, next) => {
     const { token } = req.cookies;
