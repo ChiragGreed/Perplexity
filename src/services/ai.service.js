@@ -1,4 +1,3 @@
-import { HumanMessage } from "@langchain/core/messages";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 const model = new ChatGoogleGenerativeAI({
@@ -6,10 +5,9 @@ const model = new ChatGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY
 });
 
-export const invokeAi = async ({ query }) => {
-    const response = await model.invoke([
-        new HumanMessage(query)]);
-
+export const invokeAi = async ( query ) => {
+    const response = await model.invoke(query);
+    console.log(response);
     return (response.text);
 
 }

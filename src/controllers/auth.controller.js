@@ -21,7 +21,7 @@ const register = async (req, res) => {
         const user = await userModel.create({ username, email, password })
 
         const token = JWT.sign({
-            userid: user._id
+            userId: user._id
         }, process.env.JWT_SECRET,
             { expiresIn: '1d' });
 
@@ -74,7 +74,7 @@ const resendEmail = async (req, res) => {
 
     try {
         const token = JWT.sign({
-            userid: user._id
+            userId: user._id
         }, process.env.JWT_SECRET,
             { expiresIn: '1d' });
 
@@ -142,7 +142,7 @@ const login = async (req, res) => {
     })
 
     const token = JWT.sign({
-        userid: user._id,
+        userId: user._id,
         username: user.username
     },
         process.env.JWT_SECRET,
@@ -157,7 +157,7 @@ const login = async (req, res) => {
         message: "User logged in",
         success: true,
         user: {
-            userid: user._id,
+            userId: user._id,
             username: user.username,
             email: user.email
         }
@@ -179,7 +179,7 @@ const verifyRegister = async (req, res) => {
             err: "Decoded token error"
         })
 
-        const user = await userModel.findByIdAndUpdate(decodedToken.userid, {
+        const user = await userModel.findByIdAndUpdate(decodedToken.userId, {
             verified: true
         });
 
@@ -253,9 +253,9 @@ const verifyRegister = async (req, res) => {
 }
 
 const getMe = async (req, res) => {
-    const { userid } = req.user;
+    const { userId } = req.user;
 
-    const user = await userModel.findById(userid)
+    const user = await userModel.findById(userId)
 
     if (!user) return res.status(404).json({
         message: "User not found",
