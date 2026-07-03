@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { getMeApi, loginApi } from '../Services/authApi.js'
+import { getMeApi, loginApi, registerAPi } from '../Services/authApi.js';
 import { setError, setLoading, setUser } from '../Store/authSlice.js';
 
 const useAuth = () => {
@@ -9,10 +9,12 @@ const useAuth = () => {
     const registerHandler = async (username, email, password) => {
         try {
             dispatch(setLoading(true));
-            const resData = await registerApi(email, password);
+            const resData = await registerAPi(username, email, password);
+            return { success: true, message: resData.message };
         }
         catch (error) {
             dispatch(setError(error.message));
+            return { success: false, error: error.response?.data?.message || error.message };
         }
         finally {
             dispatch(setLoading(false));
@@ -24,11 +26,12 @@ const useAuth = () => {
             dispatch(setLoading(true));
             const resData = await loginApi(email, password);
             dispatch(setUser(resData.user));
-            return true;
+            return { success: true, message: resData.message };
+
         }
         catch (error) {
             dispatch(setError(error.message));
-            return false;
+            return { success: false, error: error.response?.data?.message || error.message };
         }
         finally {
             dispatch(setLoading(false));

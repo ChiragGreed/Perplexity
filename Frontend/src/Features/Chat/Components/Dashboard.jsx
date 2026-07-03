@@ -19,15 +19,18 @@ const Dashboard = () => {
     }, [])
 
 
+    useEffect(() => {
+        if (!loading && !user) {
+            navigate('/login');
+        }
+    }, [user, loading, navigate]);
 
-    if (loading) return
-    <div>
-        <h1>Loading</h1>
-    </div>
-
-
-    if (!user) {
-        navigate('/login')
+    if (loading) {
+        return (
+            <div>
+                <h1>Loading...</h1>
+            </div>
+        );
     }
 
 
