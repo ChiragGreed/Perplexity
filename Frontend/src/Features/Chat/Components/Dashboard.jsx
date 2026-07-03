@@ -1,43 +1,13 @@
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router';
-import useAuth from '../../Auth/Hooks/useAuth';
+import Protected from "../../Auth/Components/Protected"
 
 const Dashboard = () => {
 
-    const loading = useSelector((state) => state.auth.loading);
-    const user = useSelector((state) => state.auth.user);
-    const navigate = useNavigate();
-    const { getMeHandler } = useAuth();
-
-
-    useEffect(() => {
-        async function getMe() {
-            await getMeHandler();
-        }
-        getMe();
-    }, [])
-
-
-    useEffect(() => {
-        if (!loading && !user) {
-            navigate('/login');
-        }
-    }, [user, loading, navigate]);
-
-    if (loading) {
-        return (
-            <div>
-                <h1>Loading...</h1>
-            </div>
-        );
-    }
-
-
     return (
-        <div>
-            <h1>Dashboard</h1>
-        </div>
+        <Protected>
+            <div>
+                <h1>Dashboard</h1>
+            </div>
+        </Protected>
     )
 }
 
