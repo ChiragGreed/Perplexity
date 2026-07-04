@@ -4,8 +4,6 @@ import verifyUser from "../middleware/authMiddleware.js";
 
 const chatRoute = express.Router();
 
-chatRoute.post('/newChat', verifyUser, chatController.newChat);
-
-chatRoute.post('/continue/:chatId', verifyUser, chatController.continueChat);
+chatRoute.post('/query', verifyUser, chatController.query);
 
 export default chatRoute;

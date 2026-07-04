@@ -1,4 +1,4 @@
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatMistralAI } from "@langchain/mistralai"
 
@@ -12,8 +12,17 @@ const Mistralmodel = new ChatMistralAI({
     apiKey: process.env.MISTRAL_API_KEY
 });
 
-export const invokeAi = async (query) => {
-    const response = await Geminimodel.invoke(query);
+export const invokeAi = async (messages) => {
+
+    const context = messages.map((msg) => {
+        if (msg.role === 'human') {
+            return new HumanMessage(msg.content);
+        } else if (msg.role === 'ai') {
+            return new AIMessage(msg.content);
+        }
+    }).filter((Boolean));
+
+    const response = await Geminimodel.invoke(context);
     return (response.text);
 }
 

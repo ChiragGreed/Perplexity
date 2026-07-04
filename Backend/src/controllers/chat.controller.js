@@ -3,8 +3,8 @@ import messageModel from "../models/messageModel.js";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { generateChatTitle, invokeAi } from "../services/ai.service.js";
 
-const newChat = async (req, res) => {
-    const { query } = req.body;
+const query = async (req, res) => {
+    const { query, chatId } = req.body;
     const userId = req.user.userid;
 
     if (!query) return res.status(404).json({
@@ -13,15 +13,27 @@ const newChat = async (req, res) => {
         err: "No query found"
     })
 
-    const chatTitle = await generateChatTitle(query);
+    let chat = null;
+    let chatTitle = null;
 
-    const chat = await chatModel.create({ userId, title: chatTitle });
 
-    const message = await messageModel.create({ chatId: chat._id, content: query, role: 'human' });
+    //  If chatId is not provided, create a new chat with a generated title
+    if (!chatId) {
 
-    const AiResponse = await invokeAi(query);
+        chatTitle = await generateChatTitle(query);
+        chat = await chatModel.create({ userId, title: chatTitle });
 
-    const responseMessage = await messageModel.create({ chatId: chat._id, content: AiResponse, role: 'ai' });
+    }
+
+    // If chatId is provided, continue the existing chat
+
+    const message = await messageModel.create({ chatId: chatId || chat._id, content: query, role: 'human' });
+
+    const allMessages = await messageModel.find({ chatId: chatId ? chatId : chat._id }).sort({ createdAt: 1 });
+
+    const AiResponse = await invokeAi(allMessages);
+
+    const responseMessage = await messageModel.create({ chatId: chatId ? chatId : chat._id, content: AiResponse, role: 'ai' });
 
     res.status(200).json({
         AiResponse: AiResponse,
@@ -29,50 +41,5 @@ const newChat = async (req, res) => {
     })
 }
 
-const continueChat = async (req, res) => {
-    const { query } = req.body;
-    const { chatId } = req.params;
 
-    if (!query) return res.status(404).json({
-        message: "No query found",
-        success: false,
-        err: "No query found"
-    })
-
-    const chat = await chatModel.findById(chatId);
-
-    if (!chat) return res.status(404).json({
-        message: " Chat not found",
-        success: false,
-        err: "Chat do not exist"
-    })
-
-    const message = await messageModel.create({ chatId, content: query, role: "human" });
-
-    const allMessages = await messageModel.find({ chatId }).sort({ createdAt: 1 });
-
-
-    const context = allMessages.map((msg) => {
-        if (msg.role === 'human') {
-            return new HumanMessage(msg.content);
-        } else if (msg.role === 'ai') {
-            return new AIMessage(msg.content);
-        }
-        else return null;
-    }).filter((Boolean));
-
-
-    console.log("Context: ", context);
-    const AiResponse = await invokeAi(context);
-
-    const responseMessage = await messageModel.create({ chatId: chat._id, content: AiResponse, role: 'ai' });
-
-    res.status(200).json({
-        message: AiResponse,
-        success: true
-    })
-
-}
-
-
-export default { newChat, continueChat }
+export default { query }
