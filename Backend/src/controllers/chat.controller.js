@@ -13,13 +13,13 @@ const newChat = async (req, res) => {
         err: "No query found"
     })
 
-    const chatTitle = await generateChatTitle({ title });
+    const chatTitle = await generateChatTitle(query);
 
     const chat = await chatModel.create({ userId, title: chatTitle });
 
     const message = await messageModel.create({ chatId: chat._id, content: query, role: 'human' });
 
-    const AiResponse = await invokeAi({ query });
+    const AiResponse = await invokeAi(query);
 
     const responseMessage = await messageModel.create({ chatId: chat._id, content: AiResponse, role: 'ai' });
 

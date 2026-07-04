@@ -135,6 +135,8 @@ const login = async (req, res) => {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
+    console.log(password, user.password);
+
     if (!passwordMatch) return res.status(400).json({
         message: "Invalid password or username",
         success: false,
@@ -223,7 +225,7 @@ const verifyRegister = async (req, res) => {
       <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin:0 0 28px;">
         Your Perplexity account is now active and ready to go.
       </p>
-      <a href="http://localhost:7000/api/auth/login" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
+      <a href="http://localhost:5173/login" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
         Go to Login
       </a>
     </div>

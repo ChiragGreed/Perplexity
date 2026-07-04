@@ -14,7 +14,7 @@ app.use(cors({
 }));
 
 app.use('/api/auth', authRoute);
-app.use('/api/chats', chatRoute);
+app.use('/api/chat', chatRoute);
 
 
 export default app;
