@@ -1,13 +1,19 @@
-import Protected from "../../Auth/Components/Protected"
+import { useEffect } from "react"
+import useChat from "../Hooks/useChat";
 
 const Dashboard = () => {
 
+    const { socketConnectionHandler } = useChat();
+
+    useEffect(() => {
+        const services = socketConnectionHandler();
+        services();
+    }, [])
+
     return (
-        <Protected>
-            <div>
-                <h1>Dashboard</h1>
-            </div>
-        </Protected>
+        <div>
+            <h1>Dashboard</h1>
+        </div>
     )
 }
 

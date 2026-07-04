@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useAuth from '../Hooks/useAuth.js';
 import { useNavigate, Link } from 'react-router';
@@ -35,9 +35,10 @@ function validatePassword(password) {
 }
 
 const Register = () => {
-    const { registerHandler } = useAuth();
+    const { registerHandler, getMeHandler } = useAuth();
     const navigate = useNavigate();
     const loading = useSelector((state) => state.auth.loading);
+    const user = useSelector((state) => state.auth.user);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -46,6 +47,21 @@ const Register = () => {
     const [errors, setErrors] = useState({ username: '', email: '', password: '' });
     const [formError, setFormError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+
+
+    useEffect(() => {
+        async function getMe() {
+            await getMeHandler();
+        }
+        getMe();
+    }, [])
+
+    useEffect(() => {
+        if (!loading && user) {
+            navigate('/');
+        }
+    }, [user])
+
 
     // Clear error on change
     function handleUsernameChange(value) {
