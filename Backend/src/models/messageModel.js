@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema(
   {
-    chat: {
+    chatId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Chat',
       required: true,
@@ -13,7 +13,7 @@ const messageSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'ai'],
+      enum: ['human', 'ai'],
       required: true,
     },
   },
@@ -22,5 +22,5 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-const Message = mongoose.model('Message', messageSchema);
-export default Message;
+const messageModel = mongoose.model('Message', messageSchema);
+export default messageModel;
