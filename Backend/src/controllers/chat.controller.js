@@ -39,7 +39,86 @@ const query = async (req, res) => {
         AiResponse: AiResponse,
         success: true
     })
+
+
+}
+
+const getChats = async (req, res) => {
+    const userId = req.user.userid;
+
+    const chats = await chatModel.find({ userId });
+
+    if (!chats) return res.status(404).json({
+        message: "No chats found",
+        success: false,
+        error: "No chats found with the provided userId"
+    })
+
+    res.status(200).json({
+        chats,
+        success: true
+    })
+}
+
+const getMessages = async (req, res) => {
+    const { chatId } = req.body;
+    const userId = req.user.userid;
+
+
+    if (!chatId) return res.status(404).json({
+        message: "No chatId found",
+        success: false,
+        error: " No chatId provided"
+    })
+
+    const chat = await chatModel.findOne({ _id: chatId, userId });
+
+    if (!chat) return res.status(404).json({
+        message: "Chat do not exist",
+        success: false,
+        error: "Chat do not exist"
+    })
+
+    const messages = await messageModel.find({ chatId });
+
+    if (!messages) return res.status(200).json({
+        message: "No message created for this chat",
+        success: true,
+    })
+
+    res.status(200).json({
+        messages,
+        success: true
+
+    })
+}
+
+const deleteChat = async (req, res) => {
+    const { chatId } = req.body;
+    const userId = req.user.userid;
+
+    if (!chatId) return res.status(404).json({
+        message: "No chatId found",
+        success: false,
+        error: "No chatId provided"
+    })
+
+    const chat = await chatModel.deleteOne({ _id: chatId, userId });
+
+    if (!chat) return res.status(404).json({
+        message: "Chat already deleted or do not exist",
+        success: false,
+        error: "Chat do not exist"
+    })
+
+    await messageModel.deleteMany({ chatId });
+
+    res.status(200).json({
+        message: "Chat deleted successfully",
+        success: true
+    })
+
 }
 
 
-export default { query }
+export default { query,getChats,getMessages, deleteChat };
