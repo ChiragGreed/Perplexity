@@ -5,8 +5,8 @@ const api = axios.create({
     withCredentials: true
 })
 
-export const sendQueryApi = async (query) => {
-    const response = await api.post('/query', { query });
+export const sendQueryApi = async (query, chatId) => {
+    const response = await api.post('/query', { query, chatId });
     return response.data;
 }
 
@@ -16,7 +16,7 @@ export const getChatsAPi = async () => {
 }
 
 export const getMessagesApi = async (chatId) => {
-    const response = await api.get('/getMessages', { chatId });
+    const response = await api.get(`/getMessages/?chatId=${chatId}`);
     return response.data;
 }
 
