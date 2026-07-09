@@ -1,7 +1,7 @@
 import socketIoService from "../Services/chat.socket"
 import { deleteChatAPi, getChatsAPi, getMessagesApi, sendQueryApi } from "../Services/chatApi";
 import { useDispatch, useSelector } from 'react-redux';
-import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat } from "../State/chatSlice";
+import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat } from "../State/chatSlice";
 import { setError, setLoading } from "../../Auth/State/authSlice";
 
 const useChat = () => {
@@ -11,6 +11,16 @@ const useChat = () => {
 
     const socketConnectionHandler = () => {
         return socketIoService;
+    }
+
+    const startNewChatHandler = () => {
+        dispatch(setCurrentChat(null));
+        dispatch(setChatMessages([{
+            content: '',
+            chatId: null,
+            time: null,
+            role: null,
+        }]));
     }
 
     const sendQueryHandler = async (query, chatId) => {
@@ -25,7 +35,6 @@ const useChat = () => {
         }
         catch (error) {
             dispatch(setError(error.message));
-            console.log(error);
         }
         finally {
             dispatch(setLoading(false));
@@ -36,7 +45,10 @@ const useChat = () => {
     const getChatsHandler = async () => {
         try {
             const res = await getChatsAPi();
-            dispatch(setChats(res));
+            const chatsState = res.chats.map(chat => {
+                return { title: chat.title, id: chat._id };
+            });
+            dispatch(setChats(chatsState));
         }
         catch (error) {
             dispatch(setError(error.message));
@@ -56,17 +68,38 @@ const useChat = () => {
     }
 
     const getMessagesHandler = async (chatId) => {
-        const res = await getMessagesApi(chatId);
-        dispatch(setChatMessages(res));
-        return res;
+        try {
+
+            const res = await getMessagesApi(chatId);
+
+            const messegesState = res.messages.map(msg => {
+                const formattedDate = new Intl.DateTimeFormat('en-IN', {
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                }).format(new Date(msg.createdAt))
+                return { content: msg.content, chatId: msg.chatId, time: formattedDate, role: msg.role }
+            });
+            dispatch(setChatMessages(messegesState));
+        }
+        catch (error) {
+            dispatch(setError(error.message));
+        }
     }
 
-    const deleteChatHandler = async () => {
-        const res = await deleteChatAPi();
-        return res;
+    const deleteChatHandler = async (chatId) => {
+        try {
+            await deleteChatAPi(chatId);
+            dispatch(deleteChat(chatId));
+        }
+        catch (error) {
+            dispatch(setError(error.message));
+        }
     }
 
-    return { socketConnectionHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler }
+    return { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler }
 }
 
 export default useChat;

@@ -11,14 +11,13 @@ export const chatSlice = createSlice({
         chatMessages: [{
             content: '',
             chatId: null,
+            time: null,
             role: null,
         }],
     },
     reducers: {
         setChats: (state, action) => {
-            state.chats = action.payload.chats.map(chat => {
-                return { title: chat.title, id: chat._id };
-            });
+            state.chats = action.payload;
         },
         AddNewChat: (state, action) => {
             state.chats.push(action.payload);
@@ -27,15 +26,17 @@ export const chatSlice = createSlice({
             state.currentChat = action.payload;
         },
         setChatMessages: (state, action) => {
-            state.chatMessages = action.payload.messages.map(msg => {
-                return { content: msg.content, chatId: msg.chatId, role: msg.role }
-            });
+            state.chatMessages = action.payload;
         },
         AddNewChatMessage: (state, action) => {
             state.chatMessages.push(action.payload);
         },
+        deleteChat: (state, action) => {
+            const index = state.chats.indexOf(action.payload);
+            state.chats.splice(index, 1);
+        }
     }
 })
 
-export const { setChats, AddNewChat, setCurrentChat, setChatMessages, AddNewChatMessage } = chatSlice.actions;
+export const { setChats, AddNewChat, setCurrentChat, setChatMessages, AddNewChatMessage, deleteChat } = chatSlice.actions;
 export default chatSlice.reducer;

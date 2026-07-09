@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useChat from "../Hooks/useChat";
 import { useSelector } from "react-redux";
-
-
-
+import Markdown from 'react-markdown'
 
 
 const quickPrompts = ["Summarize this thread", "Draft a launch email", "Suggest next steps"];
 
 const Dashboard = () => {
-    const { socketConnectionHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler } = useChat();
-    const chats = useSelector((state) => state.chat.chats);
-    const currentChat = useSelector((state) => state.chat.currentChat);
-    const chatMessages = useSelector((state) => state.chat.chatMessages);
-
+    const { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler } = useChat();
+    const { chats, currentChat, chatMessages } = useSelector((state) => state.chat);
 
     const [draft, setDraft] = useState("");
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteTargetId, setDeleteTargetId] = useState(null);
+    const messagesContainerRef = useRef(null);
 
     useEffect(() => {
         const services = socketConnectionHandler();
@@ -31,29 +29,37 @@ const Dashboard = () => {
         callgetChatHandler();
     }, []);
 
+    useEffect(() => {
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
+    }, [chatMessages, currentChat?.id]);
 
     const handleSend = async (event) => {
         event.preventDefault();
         const trimmed = draft.trim();
         if (!trimmed) return;
 
-        const userMessage = {
-            id: Date.now(),
-            role: "user",
-            content: trimmed,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        };
-
-        const assistantReply = {
-            id: Date.now() + 1,
-            role: "assistant",
-            content: "I’ve captured that and can turn it into a polished response for your next step.",
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        };
-
         await sendQueryHandler(trimmed, currentChat?.id);
 
         setDraft("");
+    };
+
+    const openDeleteConfirm = (chatId) => {
+        setDeleteTargetId(chatId);
+        setShowDeleteConfirm(true);
+    };
+
+    const closeDeleteConfirm = () => {
+        setShowDeleteConfirm(false);
+        setDeleteTargetId(null);
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteTargetId) return;
+
+        await deleteChatHandler(deleteTargetId);
+        closeDeleteConfirm();
     };
 
     return (
@@ -69,7 +75,11 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        <button className="mt-5 w-full rounded-xl border border-[#F5FF3A]/40 bg-[#F5FF3A] px-4 py-3 text-sm font-semibold text-[#0A0A0A] transition hover:brightness-110">
+                        <button
+                            type="button"
+                            onClick={() => startNewChatHandler()}
+                            className="mt-5 w-full rounded-xl border border-[#F5FF3A]/40 bg-[#F5FF3A] px-4 py-3 text-sm font-semibold text-[#0A0A0A] transition hover:brightness-110"
+                        >
                             + New chat
                         </button>
 
@@ -78,26 +88,36 @@ const Dashboard = () => {
                             <button className="text-xs text-[#F5FF3A] transition hover:text-[#ABD600]">View all</button>
                         </div>
 
-                        <div className="mt-3 space-y-2">
+                        <div className="mt-5 w-[90%] space-y-4">
                             {chats.map((chat) => {
                                 const isActive = currentChat?.id === chat.id;
 
                                 return (
-                                    <button
-                                        key={chat.id}
-                                        onClick={() => {
-                                            setActiveChatHandler(chat.id);
-                                            getMessagesHandler(chat.id);
-                                        }}
-                                        className={`w-full rounded-2xl border px-3 py-3 text-left transition ${isActive ? "border-[#F5FF3A]/40 bg-[#F5FF3A] text-[#0A0A0A]" : "border-transparent bg-[#151515] text-white hover:border-[#3c3c3c]"}`}
-                                    >
-                                        <div className="flex items-center justify-between gap-3">
-                                            <p className={`truncate text-sm font-semibold ${isActive ? "text-[#0A0A0A]" : "text-white"}`}>{chat.title}</p>
-                                            {chat.unread && <span className="h-2.5 w-2.5 rounded-full bg-[#F5FF3A]" />}
-                                        </div>
-                                        <p className={`mt-1 truncate text-xs ${isActive ? "text-[#0A0A0A]/80" : "text-[#888887]"}`}>{chat.preview}</p>
-                                        <p className={`mt-2 text-[11px] uppercase tracking-[0.2em] ${isActive ? "text-[#0A0A0A]/70" : "text-[#6b7280]"}`}>{chat.time}</p>
-                                    </button>
+                                    <div className="flex relative items-center justify-between gap-4"
+                                        key={chat.id}>
+                                        <button
+                                            onClick={() => {
+                                                setActiveChatHandler(chat.id);
+                                                getMessagesHandler(chat.id);
+                                            }}
+                                            className={`w-full rounded-2xl border px-3 py-3 text-left transition ${isActive ? "border-[#F5FF3A]/40 bg-[#F5FF3A] text-[#0A0A0A]" : "border-transparent bg-[#151515] text-white hover:border-[#3c3c3c]"}`}
+                                        >
+                                            <div className="flex items-center justify-between gap-3">
+                                                <p className={`truncate text-sm font-semibold ${isActive ? "text-[#0A0A0A]" : "text-white"}`}>{chat.title}</p>
+                                                {chat.unread && <span className="h-2.5 w-2.5 rounded-full bg-[#F5FF3A]" />}
+                                            </div>
+                                            <p className={`mt-1 truncate text-xs ${isActive ? "text-[#0A0A0A]/80" : "text-[#888887]"}`}>{chat.preview}</p>
+                                            <p className={`mt-2 text-[11px] uppercase tracking-[0.2em] ${isActive ? "text-[#0A0A0A]/70" : "text-[#6b7280]"}`}>{chat.time}</p>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => openDeleteConfirm(chat.id)}
+                                            className="absolute -right-10 text-[#888887] transition hover:text-[#F5FF3A]"
+                                            aria-label={`Delete ${chat.title}`}
+                                        >
+                                            <i className="ri-more-line"></i>
+                                        </button>
+                                    </div>
                                 );
                             })}
                         </div>
@@ -114,23 +134,27 @@ const Dashboard = () => {
                             </div>
                         </header>
 
-                        <section className="flex-1 min-h-0 overflow-y-auto scrollbar-none px-4 py-4 sm:px-6 sm:py-6">
-                            <div className="mx-auto flex max-w-3xl flex-col gap-4">
+                        <section ref={messagesContainerRef} className="flex-1 min-h-0 overflow-y-auto scrollbar-none px-4 py-4 sm:px-6 sm:py-6">
+                            <div className="mx-auto flex max-w-full flex-col gap-10">
                                 {chatMessages.map((message, idx) => (
                                     < div
                                         key={idx}
                                         className={`flex ${message.role === "human" ? "justify-end" : "justify-start"}`}
                                     >
                                         <div
-                                            className={`max-w-[85%] rounded-2xl border px-4 py-3 shadow-sm ${message.role === "human"
+                                            className={`max-w-[85%] rounded-2xl border px-4 py-3 text-md leading-8 shadow-sm ${message.role === "human"
                                                 ? "border-[#F5FF3A]/30 bg-[#F5FF3A] text-[#0A0A0A]"
                                                 : "border-[#3c3c3c] bg-[#161616] text-[#f5f5f5]"
                                                 }`}
                                         >
-                                            <p className="text-sm leading-6">{message.content}</p>
-                                            {/* <p className={`mt-2 text-[11px] uppercase tracking-[0.2em] ${message.role === "human" ? "text-[#0A0A0A]/70" : "text-[#888887]"}`}>
+                                            {message.role == 'ai' ?
+                                                <Markdown>{message.content}</Markdown>
+                                                :
+                                                <p>{message.content}</p>
+                                            }
+                                            <p className={`mt-2 text-[13px] uppercase tracking-[0.2em] ${message.role === "human" ? "text-[#0A0A0A]/70" : "text-[#888887]"}`}>
                                                 {message.time}
-                                            </p> */}
+                                            </p>
                                         </div>
                                     </div>
                                 ))}
@@ -177,6 +201,32 @@ const Dashboard = () => {
                     </main>
                 </div>
             </div >
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+                    <div className="w-full max-w-md rounded-3xl border border-[#3c3c3c] bg-[#111111] p-6 shadow-[0_0_40px_rgba(0,0,0,0.35)]">
+                        <p className="text-lg font-semibold text-white">Delete this chat?</p>
+                        <p className="mt-2 text-sm leading-6 text-[#888887]">
+                            This conversation will be removed from your list. This action cannot be undone.
+                        </p>
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={closeDeleteConfirm}
+                                className="rounded-xl border border-[#3c3c3c] bg-[#161616] px-4 py-2 text-sm text-white transition hover:border-[#F5FF3A]/40"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={confirmDelete}
+                                className="rounded-xl bg-[#F5FF3A] px-4 py-2 text-sm font-semibold text-[#0A0A0A] transition hover:brightness-110"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div >
     );
 };

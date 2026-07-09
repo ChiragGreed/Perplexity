@@ -95,7 +95,7 @@ const getMessages = async (req, res) => {
 }
 
 const deleteChat = async (req, res) => {
-    const { chatId } = req.body;
+    const { chatId } = req.query;
     const userId = req.user.userid;
 
     if (!chatId) return res.status(404).json({
