@@ -169,7 +169,7 @@ const Login = () => {
                         {/* Submit */}
                         <button
                             type="submit"
-                            className="w-full bg-[#F5FF3A] text-[#0A0A0A] border-none rounded-xl py-3.5 font-semibold text-base cursor-pointer flex items-center justify-center gap-2 mt-2 transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_12px_rgba(205,255,0,0.3)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full bg-linear-to-r from-[#F5FF3A] to-[#ABD600] text-[#0A0A0A] border-none rounded-xl py-3.5 font-semibold text-base cursor-pointer flex items-center justify-center gap-2 mt-2 transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_12px_rgba(205,255,0,0.3)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={loading}
                         >
                             {loading ? (
