@@ -1,17 +1,35 @@
-import socketIoService from "../Services/chat.socket"
+import { io } from 'socket.io-client';
 import { deleteChatAPi, getChatsAPi, getMessagesApi, sendQueryApi } from "../Services/chatApi";
 import { useDispatch, useSelector } from 'react-redux';
-import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat } from "../State/chatSlice";
+import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat, setAiResChunks, setIsStreaming, finishStreaming, AddAiResChunks } from "../State/chatSlice";
 import { setChatError, setChatLoading } from "../../Chat/State/chatSlice.js";
+import { useEffect, useRef } from 'react';
 
 const useChat = () => {
 
     const dispatch = useDispatch();
     const chats = useSelector((state) => state.chat.chats);
 
-    const socketConnectionHandler = () => {
-        return socketIoService;
-    }
+    // Initialize socket connection with streaming state management
+    useEffect(() => {
+        const socket = io('http://localhost:7000', {
+            withCredentials: true
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        })
+
+        socket.on('ResponseChunk', (chunk) => {
+            console.log("Chunk received: ", chunk);
+            dispatch(setIsStreaming(true));
+            dispatch(AddAiResChunks(chunk));
+        })
+
+        return () => {
+            socket.disconnect();
+        }
+    }, [dispatch]);
 
     const startNewChatHandler = () => {
         dispatch(setCurrentChat(null));
@@ -26,6 +44,8 @@ const useChat = () => {
     const sendQueryHandler = async (query, chatId) => {
 
         dispatch(setChatLoading(true));
+        dispatch(setAiResChunks(''));
+        dispatch(setIsStreaming(true));
 
         const humanTime = new Intl.DateTimeFormat('en-IN', {
             month: 'long',
@@ -43,16 +63,8 @@ const useChat = () => {
 
             if (res.chat !== null) dispatch(AddNewChat({ title: res.chat?.title, id: res.chat?._id }));
 
-            const formattedDate = new Intl.DateTimeFormat('en-IN', {
-                month: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true
-            }).format(new Date(res.chat.createdAt));
-
-            dispatch(AddNewChatMessage({ content: res.AiResponse, chatId: chatId || res._id, time: formattedDate, role: 'ai' }));
             dispatch(setCurrentChat({ title: res.chat.title, id: res.chat._id || chatId }));
+            // Don't add the full response here - let socket chunks handle it via finishStreaming
         }
         catch (error) {
             dispatch(setChatError(error.message));
@@ -120,7 +132,17 @@ const useChat = () => {
         }
     }
 
-    return { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler }
+    const socketConnectionHandler = () => {
+        // Socket is initialized in useEffect, this is for backward compatibility
+        return null;
+    }
+
+    const finishAnimationHandler = () => {
+        // Called when typing animation completes
+        dispatch(finishStreaming());
+    }
+
+    return { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler, finishAnimationHandler }
 }
 
 export default useChat;

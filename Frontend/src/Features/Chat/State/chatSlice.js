@@ -14,6 +14,11 @@ export const chatSlice = createSlice({
             time: null,
             role: null,
         }],
+        AIResChunks: {
+            content: '',
+            role: 'ai'
+        },
+        isStreaming: false,
         chatLoading: false,
         chatError: false
     },
@@ -33,6 +38,36 @@ export const chatSlice = createSlice({
         AddNewChatMessage: (state, action) => {
             state.chatMessages.push(action.payload);
         },
+        AddAiResChunks: (state, action) => {
+            state.AIResChunks.content += action.payload;
+        },
+        setAiResChunks: (state, action) => {
+            state.AIResChunks.content = action.payload;
+        },
+        setIsStreaming: (state, action) => {
+            state.isStreaming = action.payload;
+        },
+        finishStreaming: (state, action) => {
+            // Move AIResChunks to chatMessages and reset
+            if (state.AIResChunks.content.trim()) {
+                const formattedDate = new Intl.DateTimeFormat('en-IN', {
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                }).format(new Date());
+                
+                state.chatMessages.push({
+                    content: state.AIResChunks.content,
+                    chatId: state.currentChat?.id || null,
+                    time: formattedDate,
+                    role: 'ai'
+                });
+            }
+            state.AIResChunks.content = '';
+            state.isStreaming = false;
+        },
         deleteChat: (state, action) => {
             const index = state.chats.indexOf(action.payload);
             state.chats.splice(index, 1);
@@ -46,5 +81,5 @@ export const chatSlice = createSlice({
     }
 })
 
-export const { setChats, AddNewChat, setCurrentChat, setChatMessages, AddNewChatMessage, deleteChat, setChatLoading, setChatError } = chatSlice.actions;
+export const { setChats, AddNewChat, setCurrentChat, setChatMessages, AddNewChatMessage, AddAiResChunks, setAiResChunks, setIsStreaming, finishStreaming, deleteChat, setChatLoading, setChatError } = chatSlice.actions;
 export default chatSlice.reducer;

@@ -1,14 +1,30 @@
 import { io } from 'socket.io-client';
+import { AddAiResChunks } from '../State/chatSlice';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
-const socketIoService = () => {
+export let socket;
 
-    const socket = io('http://localhost:7000', {
-        withCredentials: true
-    });
+const useSocketIoService = () => {
+    const dispatch = useDispatch();
 
-    socket.on('connect', () => {
-        console.log('Connected to server');
-    })
+    useEffect(() => {
+        socket = io('http://localhost:7000', {
+            withCredentials: true
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        })
+
+        socket.on('ResponseChunk', (chunk) => {
+            dispatch(AddAiResChunks(chunk));
+        })
+
+        return () => {
+            socket.disconnect();
+        }
+    }, [dispatch]);
 }
 
-export default socketIoService
+export default useSocketIoService

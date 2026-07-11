@@ -1,9 +1,10 @@
 import { Server } from 'socket.io';
 
+export let io;
 
 const initializeSocketio = (httpServer) => {
 
-    const io = new Server(httpServer, {
+    io = new Server(httpServer, {
         cors: {
             origin: 'http://localhost:5173',
             credentials: true

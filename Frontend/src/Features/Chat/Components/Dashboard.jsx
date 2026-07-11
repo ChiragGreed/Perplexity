@@ -7,21 +7,37 @@ import Markdown from 'react-markdown'
 const quickPrompts = ["Summarize this thread", "Draft a launch email", "Suggest next steps"];
 
 const Dashboard = () => {
-    const { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler } = useChat();
-    const { chats, currentChat, chatMessages } = useSelector((state) => state.chat);
+    const { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler, finishAnimationHandler } = useChat();
+    const { chats, currentChat, chatMessages, AIResChunks, isStreaming } = useSelector((state) => state.chat);
 
     const [draft, setDraft] = useState("");
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteTargetId, setDeleteTargetId] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [displayedText, setDisplayedText] = useState("");
     const messagesContainerRef = useRef(null);
 
     useEffect(() => {
-        const services = socketConnectionHandler();
-        if (typeof services === "function") {
-            services();
-        }
+        socketConnectionHandler();
     }, []);
+
+    // Typing animation effect for AI response - only while streaming
+    useEffect(() => {
+        if (!isStreaming) {
+            setDisplayedText("");
+            return;
+        }
+
+        if (AIResChunks.content.length > displayedText.length) {
+            const timer = setTimeout(() => {
+                setDisplayedText(AIResChunks.content.substring(0, displayedText.length + 1));
+            }, 0.00010); // Adjust speed here (lower = faster)
+            return () => clearTimeout(timer);
+        } else if (AIResChunks.content.length > 0 && displayedText.length === AIResChunks.content.length && isStreaming) {
+            // Animation complete - finish streaming and move to chatMessages
+            finishAnimationHandler();
+        }
+    }, [displayedText, AIResChunks.content, isStreaming, finishAnimationHandler]);
 
     useEffect(() => {
         async function callgetChatHandler() {
@@ -41,6 +57,7 @@ const Dashboard = () => {
         const trimmed = draft.trim();
         if (!trimmed) return;
 
+        setDisplayedText(""); // Reset animation for new response
         await sendQueryHandler(trimmed, currentChat?.id);
 
         setDraft("");
@@ -94,6 +111,7 @@ const Dashboard = () => {
                         type="button"
                         onClick={() => {
                             startNewChatHandler();
+                            setDisplayedText("");
                             setSidebarOpen(false);
                         }}
                         className="w-full bg-linear-to-r from-[#F5FF3A] to-[#ABD600] text-black rounded-xl px-4 py-3 text-md font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-[0_0_20px_rgba(171,214,0,0.3)] active:scale-[0.98]"
@@ -112,11 +130,11 @@ const Dashboard = () => {
 
                 {/* Chat List */}
                 <div className="flex-1 overflow-y-auto px-3 space-y-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
-                    {chats.map((chat) => {
+                    {chats.slice().reverse().map((chat, idx) => {
                         const isActive = currentChat?.id === chat.id;
 
                         return (
-                            <div className="group relative flex items-center" key={chat.id}>
+                            <div className="group relative flex items-center" key={idx}>
                                 <button
                                     onClick={() => {
                                         setActiveChatHandler(chat.id);
@@ -227,11 +245,28 @@ const Dashboard = () => {
                                 </div>
                             ))
                         )}
+
+                        {isStreaming && (
+                            <div className="flex gap-3 max-w-[90%] lg:max-w-[85%]">
+                                <div className="shrink-0 mt-1">
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <div className="bg-[#141414] border border-[#1C1C1E] rounded-2xl rounded-tl-sm px-5 py-4">
+                                        <div className="text-sm leading-7 text-[#E5E2E1] prose prose-invert prose-sm max-w-none">
+                                            <Markdown>{displayedText}</Markdown>
+                                            {displayedText.length < AIResChunks.content.length && (
+                                                <span className="inline-block w-2 h-5 ml-1 bg-[#F5FF3A] animate-pulse rounded-sm"></span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </section>
+                </section >
 
                 {/* ── Bottom Input Area ── */}
-                <footer className="shrink-0 border-t border-[#1C1C1E] px-4 py-5 sm:px-8 lg:px-12 bg-gradient-to-t from-[#0A0A0A] to-[#0A0A0A]/95">
+                < footer className="shrink-0 border-t border-[#1C1C1E] px-4 py-5 sm:px-8 lg:px-12 bg-gradient-to-t from-[#0A0A0A] to-[#0A0A0A]/95" >
                     <div className="mx-auto max-w-[800px] flex flex-col gap-3">
 
                         {/* Quick Prompt Pills */}
@@ -270,44 +305,46 @@ const Dashboard = () => {
                             </div>
                         </form>
                     </div>
-                </footer>
-            </main>
+                </footer >
+            </main >
 
             {/* ── Delete Confirmation Modal ── */}
-            {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-                    <div className="w-full max-w-md bg-[#141414] border border-[#1C1C1E] rounded-2xl p-6 shadow-[0_0_40px_rgba(245,158,11,0.08)]">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 flex items-center justify-center">
-                                <svg viewBox="0 0 20 20" className="h-5 w-5 text-[#F59E0B]" fill="currentColor">
-                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
+            {
+                showDeleteConfirm && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+                        <div className="w-full max-w-md bg-[#141414] border border-[#1C1C1E] rounded-2xl p-6 shadow-[0_0_40px_rgba(245,158,11,0.08)]">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 flex items-center justify-center">
+                                    <svg viewBox="0 0 20 20" className="h-5 w-5 text-[#F59E0B]" fill="currentColor">
+                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <p className="text-lg font-semibold text-white">Delete this chat?</p>
                             </div>
-                            <p className="text-lg font-semibold text-white">Delete this chat?</p>
-                        </div>
-                        <p className="mt-2 text-sm leading-6 text-[#A1A1AA] ml-[52px]">
-                            This conversation will be removed from your list. This action cannot be undone.
-                        </p>
-                        <div className="mt-6 flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={closeDeleteConfirm}
-                                className="rounded-xl border border-[#27272A] bg-transparent px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:border-[#F59E0B]/40 hover:text-[#FBBF24]"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="button"
-                                onClick={confirmDelete}
-                                className="rounded-xl bg-linear-to-r from-[#F5FF3A] to-[#ABD600] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[0_0_15px_rgba(171,214,0,0.4)]"
-                            >
-                                Delete
-                            </button>
+                            <p className="mt-2 text-sm leading-6 text-[#A1A1AA] ml-[52px]">
+                                This conversation will be removed from your list. This action cannot be undone.
+                            </p>
+                            <div className="mt-6 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={closeDeleteConfirm}
+                                    className="rounded-xl border border-[#27272A] bg-transparent px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:border-[#F59E0B]/40 hover:text-[#FBBF24]"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={confirmDelete}
+                                    className="rounded-xl bg-linear-to-r from-[#F5FF3A] to-[#ABD600] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[0_0_15px_rgba(171,214,0,0.4)]"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

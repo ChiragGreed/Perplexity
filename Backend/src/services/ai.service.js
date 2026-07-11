@@ -4,6 +4,7 @@ import { ChatMistralAI } from "@langchain/mistralai";
 import { tool, createAgent } from 'langchain';
 import { internetService } from "./internet.service.js";
 import * as z from 'zod';
+import { io } from "./socket.service.js";
 
 
 
@@ -45,12 +46,22 @@ export const invokeAi = async (messages) => {
 
     const geminiAgent = createAgent({
         model: Geminimodel,
-        tools: [internetSearch],
-        stateModifier: systemPrompt
+        // tools: [internetSearch],
+        // stateModifier: systemPrompt
     });
 
-    const response = await geminiAgent.invoke({ messages: context });
-    return (response.messages[response.messages.length - 1].text);
+    const response = await geminiAgent.streamEvents({ messages: context });
+    let finalResponse = '';
+
+    for await (const chunk of response) {
+        if (chunk.event === 'on_chat_model_stream' && chunk.data?.chunk) {
+            io.emit('ResponseChunk', (chunk.data.chunk.content));
+            finalResponse += chunk.data.chunk.content;
+        }
+    }
+
+    console.log(finalResponse);
+    return (finalResponse);
 }
 
 export const generateChatTitle = async (title) => {
