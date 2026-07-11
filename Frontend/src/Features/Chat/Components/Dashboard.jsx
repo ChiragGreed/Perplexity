@@ -134,7 +134,7 @@ const Dashboard = () => {
                         const isActive = currentChat?.id === chat.id;
 
                         return (
-                            <div className="group relative flex items-center" key={idx}>
+                            <div className="group relative flex items-center" key={chat.id ?? `chat-${idx}`}>
                                 <button
                                     onClick={() => {
                                         setActiveChatHandler(chat.id);

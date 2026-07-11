@@ -21,7 +21,6 @@ const useChat = () => {
         })
 
         socket.on('ResponseChunk', (chunk) => {
-            console.log("Chunk received: ", chunk);
             dispatch(setIsStreaming(true));
             dispatch(AddAiResChunks(chunk));
         })
@@ -60,10 +59,15 @@ const useChat = () => {
         try {
 
             const res = await sendQueryApi(query, chatId);
+            const createdChat = res?.chat;
 
-            if (res.chat !== null) dispatch(AddNewChat({ title: res.chat?.title, id: res.chat?._id }));
+            if (!chatId && createdChat?._id) {
+                dispatch(AddNewChat({ title: createdChat.title, id: createdChat._id }));
+            }
 
-            dispatch(setCurrentChat({ title: res.chat.title, id: res.chat._id || chatId }));
+            if (createdChat) {
+                dispatch(setCurrentChat({ title: createdChat.title, id: createdChat._id || chatId }));
+            }
             // Don't add the full response here - let socket chunks handle it via finishStreaming
         }
         catch (error) {

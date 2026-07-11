@@ -24,10 +24,16 @@ export const chatSlice = createSlice({
     },
     reducers: {
         setChats: (state, action) => {
-            state.chats = action.payload;
+            state.chats = Array.isArray(action.payload) ? action.payload : [];
         },
         AddNewChat: (state, action) => {
-            state.chats.push(action.payload);
+            const chat = action.payload;
+            if (!chat?.id) return;
+
+            const existingChat = state.chats.some((existing) => existing.id === chat.id);
+            if (!existingChat) {
+                state.chats.push({ title: chat.title, id: chat.id });
+            }
         },
         setCurrentChat: (state, action) => {
             state.currentChat = action.payload;
@@ -69,8 +75,7 @@ export const chatSlice = createSlice({
             state.isStreaming = false;
         },
         deleteChat: (state, action) => {
-            const index = state.chats.indexOf(action.payload);
-            state.chats.splice(index, 1);
+            state.chats = state.chats.filter((chat) => chat.id !== action.payload);
         },
         setChatLoading: (state, action) => {
             state.loading = action.payload;
