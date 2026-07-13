@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: "https://ask-base-roan.vercel.app/api/chat",
+    baseURL: "https://perplexity-jbli.onrender.com/api/chat",
     withCredentials: true
 })
 

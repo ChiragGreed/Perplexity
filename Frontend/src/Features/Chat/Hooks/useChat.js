@@ -12,7 +12,7 @@ const useChat = () => {
 
     // Initialize socket connection with streaming state management
     useEffect(() => {
-        const socket = io('http://localhost:7000', {
+        const socket = io('https://ask-base-roan.vercel.app', {
             withCredentials: true
         });
 
