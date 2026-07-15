@@ -98,7 +98,7 @@ const Dashboard = () => {
             >
                 {/* Brand */}
                 <div className="flex items-center gap-3 px-6 pt-6 pb-4">
-                    <img className="h-10 w-10" src="../../../../public/images/AppLogo.png" alt="AskBase logo" />
+                    <img className="h-10 w-10" src="/images/AppLogo.png" alt="AskBase logo" />
                     <div>
                         <p className="text-lg font-semibold tracking-tight text-white">AskBase</p>
                         <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#71717A]">AI Assistant</p>

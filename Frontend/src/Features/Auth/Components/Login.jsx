@@ -94,7 +94,7 @@ const Login = () => {
                 <div className="flex flex-col items-center w-full max-w-[360px]">
                     {/* Logo */}
                     <div className="flex items-center gap-2 mb-10">
-                        <img className="h-20 w-24 m-0" src="../../../../public/images/AppLogo.png" alt="App Logo" />
+                        <img className="h-20 w-24 m-0" src="images/AppLogo.png" alt="App Logo" />
                         <span className="text-4xl font-extrabold tracking-tight text-white">AskBase</span>
                     </div>
 
@@ -214,7 +214,7 @@ const Login = () => {
             {/* ── RIGHT PANEL — Hero ── */}
             < section className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-[#0A0A0A]" >
                 <img
-                    src='../../../../public/images/Login_Hero.png'
+                    src='images/Login_Hero.png'
                     alt="Futuristic VR experience"
                     className="absolute top-1/2 left-1/2 w-full h-full max-w-[42vw] max-h-[90vh] object-cover object-bottom rounded-2xl -translate-x-1/2 -translate-y-1/2"
                 />

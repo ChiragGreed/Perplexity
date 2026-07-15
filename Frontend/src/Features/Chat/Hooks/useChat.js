@@ -12,7 +12,7 @@ const useChat = () => {
 
     // Initialize socket connection with streaming state management
     useEffect(() => {
-        const socket = io('https://perplexity-jbli.onrender.com', {
+        const socket = io('https://askbase-qv8j.onrender.com', {
             withCredentials: true
         });
 

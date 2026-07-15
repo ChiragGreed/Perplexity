@@ -121,7 +121,7 @@ const Register = () => {
                 <div className="flex flex-col items-center w-full max-w-[360px]">
                     {/* Logo */}
                     <div className="flex items-center gap-2 mb-8">
-                        <img className="h-20 w-24 m-0" src="../../../../public/images/AppLogo.png" alt="App Logo" />
+                        <img className="h-20 w-24 m-0" src="images/AppLogo.png" alt="App Logo" />
                         <span className="text-4xl font-extrabold tracking-tight text-white">AskBase</span>
                     </div>
 
@@ -212,7 +212,7 @@ const Register = () => {
                         {/* Submit */}
                         <button
                             type="submit"
-                            className="w-full bg-[#F5FF3A] text-[#0A0A0A] border-none rounded-xl py-3 font-semibold text-sm cursor-pointer flex items-center justify-center gap-2 mt-1 transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_12px_rgba(205,255,0,0.3)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full bg-linear-to-r from-[#F5FF3A] to-[#ABD600] text-[#0A0A0A] border-none rounded-xl py-3 font-semibold text-sm cursor-pointer flex items-center justify-center gap-2 mt-1 transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_12px_rgba(205,255,0,0.3)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                             disabled={loading}
                         >
                             {loading ? (
@@ -253,7 +253,7 @@ const Register = () => {
             {/* ── RIGHT PANEL — Hero ── */}
             <section className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-[#0A0A0A]">
                 <img
-                    src='../../../../public/images/Register_Hero.png'
+                    src='images/Register_Hero.png'
                     alt="Futuristic VR experience"
                     className="absolute top-1/2 left-1/2 w-full h-full max-w-[42vw] max-h-[90vh] object-cover object-bottom rounded-2xl -translate-x-1/2 -translate-y-1/2"
                 />
