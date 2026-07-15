@@ -1,16 +1,13 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
+import sgTransport from 'nodemailer-sendgrid-transport';
 
 
-const tranporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        type: 'OAuth2',
-        user: process.env.GOOGLE_USER,
-        clientId: process.env.GOOGLE_CLIENT_URI,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        refreshToken: process.env.GOOGLE_REFRESH_TOKEN
-    }
-})
+const tranporter = nodemailer.createTransport(
+    sgTransport({
+        auth: process.env.SENDGRID_API_KEY
+    })
+)
+
 
 tranporter.verify((error, success) => {
     if (error) {
