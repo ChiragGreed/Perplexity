@@ -42,6 +42,7 @@ const Register = () => {
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [registeredEmail, setRegisteredEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({ username: '', email: '', password: '' });
@@ -87,7 +88,7 @@ const Register = () => {
 
     function startResendCountdown() {
         if (countdownRef.current) clearInterval(countdownRef.current);
-        setResendCountdown(10);
+        setResendCountdown(60);
         countdownRef.current = setInterval(() => {
             setResendCountdown(prev => {
                 if (prev <= 1) {
@@ -117,8 +118,11 @@ const Register = () => {
         setFormError('');
         setSuccessMessage('');
 
+        const normalizedEmail = email.trim().toLowerCase();
+        setRegisteredEmail(normalizedEmail);
+
         try {
-            const res = await registerHandler(username.trim(), email.trim().toLowerCase(), password);
+            const res = await registerHandler(username.trim(), normalizedEmail, password);
             if (res && res.success) {
                 setSuccessMessage(res.message || 'Registration successful! Please check your email to verify your account.');
                 // Clear form fields
@@ -134,10 +138,11 @@ const Register = () => {
         }
     }
 
-    async function resendHandler() {
+    async function resendHandler(resendEmail = email) {
         if (resendCountdown > 0) return;
         startResendCountdown();
-        const res = await resendEmailHandler(email.trim());
+        const targetEmail = (resendEmail || registeredEmail || email).trim();
+        const res = await resendEmailHandler(targetEmail);
         if (res && res.success) {
             setSuccessMessage(res.message || 'Resend successful! Please check your email to verify your account.');
         } else {
@@ -172,7 +177,7 @@ const Register = () => {
                             {/* Resend button */}
                             <button
                                 type="button"
-                                onClick={() => { resendHandler(email) }}
+                                onClick={() => resendHandler()}
                                 disabled={resendCountdown > 0}
                                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300"
                                 style={resendCountdown > 0 ? {
