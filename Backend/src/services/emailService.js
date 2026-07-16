@@ -1,11 +1,11 @@
 import sgMail from '@sendgrid/mail';
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const sendEmail = async (to, subject, html) => {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
     try {
-        const info = await tranporter.sendMail({
+        const [response] = await sgMail.send({
             from: `AskBase: ${process.env.GOOGLE_USER}`,
             to,
             subject,
@@ -21,4 +21,4 @@ const sendEmail = async (to, subject, html) => {
 
 }
 
-export default sendEmail
+export default sendEmail;
