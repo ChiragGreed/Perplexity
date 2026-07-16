@@ -104,9 +104,9 @@ const register = async (req, res) => {
 
 const resendEmail = async (req, res) => {
 
-    const { username } = req.body;
+    const { email } = req.body;
 
-    const user = await userModel.findOne({ username });
+    const user = await userModel.findOne({ email });
 
     if (!user) return res.status(404).json({
         message: "Please Register first",
