@@ -137,7 +137,7 @@ const Register = () => {
     async function resendHandler() {
         if (resendCountdown > 0) return;
         startResendCountdown();
-        const res = await resendEmailHandler(username.trim());
+        const res = await resendEmailHandler(email.trim());
         if (res && res.success) {
             setSuccessMessage(res.message || 'Resend successful! Please check your email to verify your account.');
         } else {
@@ -172,7 +172,7 @@ const Register = () => {
                             {/* Resend button */}
                             <button
                                 type="button"
-                                onClick={() => { resendHandler(username) }}
+                                onClick={() => { resendHandler(email) }}
                                 disabled={resendCountdown > 0}
                                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300"
                                 style={resendCountdown > 0 ? {

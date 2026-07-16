@@ -10,8 +10,8 @@ export const registerAPi = async (username, email, password) => {
     return response.data;
 }
 
-export const resendEmailApi = async (username) => {
-    const response = await api.post('/resendEmail', { username });
+export const resendEmailApi = async (email) => {
+    const response = await api.post('/resendEmail', { email });
     return response.data;
 }
 

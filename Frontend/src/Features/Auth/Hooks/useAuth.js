@@ -21,10 +21,10 @@ const useAuth = () => {
         }
     }
 
-    const resendEmailHandler = async (username) => {
+    const resendEmailHandler = async (email) => {
         try {
             dispatch(setLoading(true));
-            const resData = await resendEmailApi(username);
+            const resData = await resendEmailApi(email);
             return { success: true, message: resData.message };
         }
         catch (error) {
