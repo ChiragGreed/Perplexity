@@ -27,18 +27,65 @@ const register = async (req, res) => {
 
 
         const emailHtml = `
-<div style="max-width:480px; margin:0 auto; padding:32px; background-color:#0e0e1c; border-radius:12px; font-family:Georgia,serif; text-align:center;">
-  <h2 style="color:#e8e8f5; font-weight:300; margin-bottom:12px;">Welcome to Perplexity</h2>
-  <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin-bottom:28px;">
-    Click the button below to verify your account.
-  </p>
-  <a href="https://askbase-qv8j.onrender.com/api/auth/verifyRegister?token=${token}" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
-    Verify My Account
-  </a>
-  <p style="color:#3e3e58; font-size:12px; margin-top:24px;">
-    If you didn't sign up, ignore this email.
-  </p>
-</div>`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify your AskBase account</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0A0A0A; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0A0A0A; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="480" cellpadding="0" cellspacing="0" style="background-color:#111111; border-radius:16px; border:1px solid #27272A; overflow:hidden; max-width:480px; width:100%;">
+
+          <!-- Header accent line -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#F5FF3A,#ABD600); height:3px; font-size:0; line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 40px 32px; text-align:center;">
+
+              <!-- Logo / wordmark -->
+              <p style="margin:0 0 28px; font-size:22px; font-weight:700; letter-spacing:-0.5px; color:#FFFFFF;">AskBase</p>
+
+              <!-- Title -->
+              <h1 style="margin:0 0 12px; font-size:20px; font-weight:600; color:#FFFFFF; letter-spacing:-0.3px;">Verify your email address</h1>
+
+              <!-- Body copy -->
+              <p style="margin:0 0 32px; font-size:14px; line-height:1.7; color:#888887;">
+                Thanks for signing up! Click the button below to confirm your email and activate your AskBase account.
+              </p>
+
+              <!-- CTA button -->
+              <a href="https://askbase-qv8j.onrender.com/api/auth/verifyRegister?token=${token}"
+                 style="display:inline-block; background:linear-gradient(90deg,#F5FF3A,#ABD600); color:#0A0A0A; text-decoration:none; padding:13px 36px; border-radius:12px; font-size:14px; font-weight:700; letter-spacing:0.2px;">
+                Verify My Account
+              </a>
+
+              <!-- Fine print -->
+              <p style="margin:28px 0 0; font-size:12px; color:#3c3c3c; line-height:1.6;">
+                If you didn&rsquo;t create an AskBase account, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px; border-top:1px solid #1f1f1f; text-align:center;">
+              <p style="margin:0; font-size:11px; color:#3c3c3c;">&copy; 2025 AskBase. All rights reserved.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
 
         await sendEmail(
             email,
@@ -80,18 +127,65 @@ const resendEmail = async (req, res) => {
 
 
         const emailHtml = `
-    <div style="max-width:480px; margin:0 auto; padding:32px; background-color:#0e0e1c; border-radius:12px; font-family:Georgia,serif; text-align:center;">
-    <h2 style="color:#e8e8f5; font-weight:300; margin-bottom:12px;">Welcome to Perplexity</h2>
-    <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin-bottom:28px;">
-    Click the button below to verify your account.
-    </p>
-    <a href="https://askbase-qv8j.onrender.com/api/auth/verifyRegister?token=${token}" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
-    Verify My Account
-    </a>
-    <p style="color:#3e3e58; font-size:12px; margin-top:24px;">
-    If you didn't sign up, ignore this email.
-    </p>
-    </div>`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify your AskBase account</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0A0A0A; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0A0A0A; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="480" cellpadding="0" cellspacing="0" style="background-color:#111111; border-radius:16px; border:1px solid #27272A; overflow:hidden; max-width:480px; width:100%;">
+
+          <!-- Header accent line -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#F5FF3A,#ABD600); height:3px; font-size:0; line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 40px 32px; text-align:center;">
+
+              <!-- Logo / wordmark -->
+              <p style="margin:0 0 28px; font-size:22px; font-weight:700; letter-spacing:-0.5px; color:#FFFFFF;">AskBase</p>
+
+              <!-- Title -->
+              <h1 style="margin:0 0 12px; font-size:20px; font-weight:600; color:#FFFFFF; letter-spacing:-0.3px;">Verify your email address</h1>
+
+              <!-- Body copy -->
+              <p style="margin:0 0 32px; font-size:14px; line-height:1.7; color:#888887;">
+                We received a request to resend your verification email. Click the button below to confirm your email and activate your AskBase account.
+              </p>
+
+              <!-- CTA button -->
+              <a href="https://askbase-qv8j.onrender.com/api/auth/verifyRegister?token=${token}"
+                 style="display:inline-block; background:linear-gradient(90deg,#F5FF3A,#ABD600); color:#0A0A0A; text-decoration:none; padding:13px 36px; border-radius:12px; font-size:14px; font-weight:700; letter-spacing:0.2px;">
+                Verify My Account
+              </a>
+
+              <!-- Fine print -->
+              <p style="margin:28px 0 0; font-size:12px; color:#3c3c3c; line-height:1.6;">
+                If you didn&rsquo;t request this, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px; border-top:1px solid #1f1f1f; text-align:center;">
+              <p style="margin:0; font-size:11px; color:#3c3c3c;">&copy; 2025 AskBase. All rights reserved.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
 
         await sendEmail(
             user.email,
@@ -193,44 +287,57 @@ const verifyRegister = async (req, res) => {
         })
 
 
-        const alreadyVerifiedPageHtml = ` <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Verified</title>
-  </head>
-  <body style="margin:0; background:#07070f; display:flex; align-items:center; justify-content:center; min-height:100vh;">
-    <div style="max-width:420px; width:100%; text-align:center; font-family:Georgia,serif; background:#0e0e1c; padding:40px; border-radius:12px; border:1px solid #1f1f35;">
-      <div style="font-size:40px; margin-bottom:16px;">✦</div>
-      <h2 style="color:#20DDAD; font-weight:300; margin:0 0 12px;">Account Verified!</h2>
-      <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin:0 0 28px;">
-        Your Perplexity account is now active and ready to go.
-      </p>
-    </div>
-  </body>
-  </html>`
+        const alreadyVerifiedPageHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Already Verified — AskBase</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0A0A0A; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <div style="max-width:420px; width:90%; text-align:center; background:#111111; padding:48px 40px; border-radius:16px; border:1px solid #27272A; overflow:hidden; position:relative;">
+    <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#F5FF3A,#ABD600);"></div>
+    <p style="font-size:22px; font-weight:700; color:#FFFFFF; letter-spacing:-0.5px; margin-bottom:20px;">AskBase</p>
+    <div style="font-size:36px; margin-bottom:16px;">✓</div>
+    <h1 style="font-size:20px; font-weight:600; color:#FFFFFF; margin-bottom:10px; letter-spacing:-0.3px;">Already Verified!</h1>
+    <p style="font-size:14px; color:#888887; line-height:1.7; margin-bottom:0;">
+      Your AskBase account is already active. Head over to the login page to sign in.
+    </p>
+  </div>
+</body>
+</html>`
 
-        const verifiedPageHtml = ` <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Verified</title>
-  </head>
-  <body style="margin:0; background:#07070f; display:flex; align-items:center; justify-content:center; min-height:100vh;">
-    <div style="max-width:420px; width:100%; text-align:center; font-family:Georgia,serif; background:#0e0e1c; padding:40px; border-radius:12px; border:1px solid #1f1f35;">
-      <div style="font-size:40px; margin-bottom:16px;">✦</div>
-      <h2 style="color:#20DDAD; font-weight:300; margin:0 0 12px;">Account Verified!</h2>
-      <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin:0 0 28px;">
-        Your Perplexity account is now active and ready to go.
-      </p>
-      <a href="http://localhost:5173/login" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
-        Go to Login
-      </a>
-    </div>
-  </body>
-  </html>`
+        const verifiedPageHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Verified — AskBase</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0A0A0A; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <div style="max-width:420px; width:90%; text-align:center; background:#111111; padding:48px 40px; border-radius:16px; border:1px solid #27272A; overflow:hidden; position:relative;">
+    <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#F5FF3A,#ABD600);"></div>
+    <p style="font-size:22px; font-weight:700; color:#FFFFFF; letter-spacing:-0.5px; margin-bottom:20px;">AskBase</p>
+    <div style="font-size:36px; margin-bottom:16px;">✓</div>
+    <h1 style="font-size:20px; font-weight:600; color:#FFFFFF; margin-bottom:10px; letter-spacing:-0.3px;">Account Verified!</h1>
+    <p style="font-size:14px; color:#888887; line-height:1.7; margin-bottom:32px;">
+      Your AskBase account is now active and ready to go.
+    </p>
+    <a href="https://askbase-qv8j.onrender.com/login"
+       style="display:inline-block; background:linear-gradient(90deg,#F5FF3A,#ABD600); color:#0A0A0A; text-decoration:none; padding:13px 36px; border-radius:12px; font-size:14px; font-weight:700; letter-spacing:0.2px;">
+      Go to Login
+    </a>
+  </div>
+</body>
+</html>`
 
         if (user.verified) {
             res.send(alreadyVerifiedPageHtml)
