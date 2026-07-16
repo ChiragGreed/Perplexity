@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useAuth from '../Hooks/useAuth.js';
 import { useNavigate, Link } from 'react-router';
@@ -35,7 +35,7 @@ function validatePassword(password) {
 }
 
 const Register = () => {
-    const { registerHandler, getMeHandler } = useAuth();
+    const { registerHandler, resendEmailHandler, getMeHandler } = useAuth();
     const navigate = useNavigate();
     const loading = useSelector((state) => state.auth.loading);
     const user = useSelector((state) => state.auth.user);
@@ -47,6 +47,8 @@ const Register = () => {
     const [errors, setErrors] = useState({ username: '', email: '', password: '' });
     const [formError, setFormError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [resendCountdown, setResendCountdown] = useState(0); // 0 = button visible, >0 = cooling down
+    const countdownRef = useRef(null);
 
 
     useEffect(() => {
@@ -83,6 +85,24 @@ const Register = () => {
         setErrors(prev => ({ ...prev, password: '' }));
     }
 
+    function startResendCountdown() {
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        setResendCountdown(10);
+        countdownRef.current = setInterval(() => {
+            setResendCountdown(prev => {
+                if (prev <= 1) {
+                    clearInterval(countdownRef.current);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    }
+
+    useEffect(() => {
+        return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+    }, []);
+
     async function submitHandler(e) {
         e.preventDefault();
 
@@ -105,11 +125,23 @@ const Register = () => {
                 setUsername('');
                 setEmail('');
                 setPassword('');
+                startResendCountdown();
             } else {
                 setFormError(res?.error || 'Registration failed. Please try again.');
             }
         } catch (err) {
             setFormError('Something went wrong. Please try again.');
+        }
+    }
+
+    async function resendHandler() {
+        if (resendCountdown > 0) return;
+        startResendCountdown();
+        const res = await resendEmailHandler(username.trim());
+        if (res && res.success) {
+            setSuccessMessage(res.message || 'Resend successful! Please check your email to verify your account.');
+        } else {
+            setFormError(res?.error || 'Resend failed. Please try again.');
         }
     }
 
@@ -131,9 +163,54 @@ const Register = () => {
 
                     {/* Form-level success banner */}
                     {successMessage && (
-                        <div className="w-full bg-emerald-500/10 border border-emerald-500/20 rounded p-3.5 mb-4 flex items-center gap-2.5">
-                            <i className="ri-checkbox-circle-line text-emerald-400 text-[18px] mt-0.5"></i>
-                            <span className="text-xs text-emerald-400 leading-normal">{successMessage}</span>
+                        <div className="w-full mb-4 flex flex-col gap-2.5">
+                            <div className="w-full bg-emerald-500/10 border border-emerald-500/20 rounded p-3.5 flex items-center gap-2.5">
+                                <i className="ri-checkbox-circle-line text-emerald-400 text-[18px] mt-0.5"></i>
+                                <span className="text-xs text-emerald-400 leading-normal">{successMessage}</span>
+                            </div>
+
+                            {/* Resend button */}
+                            <button
+                                type="button"
+                                onClick={() => { resendHandler(username) }}
+                                disabled={resendCountdown > 0}
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300"
+                                style={resendCountdown > 0 ? {
+                                    background: 'transparent',
+                                    borderColor: '#3c3c3c',
+                                    color: '#555',
+                                    cursor: 'not-allowed',
+                                } : {
+                                    background: 'transparent',
+                                    borderColor: '#F5FF3A40',
+                                    color: '#F5FF3A',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 0 0 0 rgba(245,255,58,0)',
+                                }}
+                                onMouseEnter={e => { if (resendCountdown === 0) e.currentTarget.style.boxShadow = '0 0 10px rgba(245,255,58,0.15)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
+                            >
+                                {resendCountdown > 0 ? (
+                                    <>
+                                        <span
+                                            className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full text-[10px] font-bold"
+                                            style={{
+                                                background: 'conic-gradient(#F5FF3A ' + (resendCountdown / 10 * 360) + 'deg, #27272A 0deg)',
+                                            }}
+                                        >
+                                            <span className="inline-flex items-center justify-center w-[12px] h-[12px] rounded-full bg-[#0A0A0A] text-[#888887] text-[8px]">
+                                                {resendCountdown}
+                                            </span>
+                                        </span>
+                                        <span className="text-[#555]">Resend email in {resendCountdown}s</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="ri-mail-send-line text-[15px]"></i>
+                                        <span>Resend verification email</span>
+                                    </>
+                                )}
+                            </button>
                         </div>
                     )}
 

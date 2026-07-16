@@ -21,6 +21,21 @@ const useAuth = () => {
         }
     }
 
+    const resendEmailHandler = async (username) => {
+        try {
+            dispatch(setLoading(true));
+            const resData = await resendEmailApi(username);
+            return { success: true, message: resData.message };
+        }
+        catch (error) {
+            dispatch(setError(error.message));
+            return { success: false, error: error.response?.data?.message || error.message };
+        }
+        finally {
+            dispatch(setLoading(false));
+        }
+    }
+
     const loginHandler = async (email, password) => {
         try {
             dispatch(setLoading(true));
@@ -52,7 +67,7 @@ const useAuth = () => {
         }
     }
 
-    return { registerHandler, loginHandler, getMeHandler }
+    return { registerHandler, resendEmailHandler, loginHandler, getMeHandler }
 }
 
 export default useAuth;

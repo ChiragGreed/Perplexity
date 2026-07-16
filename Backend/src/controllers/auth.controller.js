@@ -32,7 +32,7 @@ const register = async (req, res) => {
   <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin-bottom:28px;">
     Click the button below to verify your account.
   </p>
-  <a href="http://localhost:7000/api/auth/verifyRegister?token=${token}" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
+  <a href="https://askbase-qv8j.onrender.com/api/auth/verifyRegister?token=${token}" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
     Verify My Account
   </a>
   <p style="color:#3e3e58; font-size:12px; margin-top:24px;">
@@ -85,7 +85,7 @@ const resendEmail = async (req, res) => {
     <p style="color:#7a7a9a; font-size:15px; line-height:1.7; margin-bottom:28px;">
     Click the button below to verify your account.
     </p>
-    <a href="http://localhost:7000/api/auth/verifyRegister?token=${token}" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
+    <a href="https://askbase-qv8j.onrender.com/api/auth/verifyRegister?token=${token}" style="display:inline-block; background:linear-gradient(135deg,#20DDAD,#1a9fff); color:#07070f; text-decoration:none; padding:12px 32px; border-radius:50px; font-size:13px; font-family:monospace; letter-spacing:1px;">
     Verify My Account
     </a>
     <p style="color:#3e3e58; font-size:12px; margin-top:24px;">

@@ -6,7 +6,7 @@ const sendEmail = async (to, subject, html) => {
 
     try {
         const [response] = await sgMail.send({
-            from: `AskBase: ${process.env.GOOGLE_USER}`,
+            from: `"AskBase:" <${process.env.GOOGLE_USER}>`,
             to,
             subject,
             html
