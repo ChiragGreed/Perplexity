@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import { deleteChatAPi, getChatsAPi, getMessagesApi, sendQueryApi } from "../Services/chatApi";
 import { useDispatch, useSelector } from 'react-redux';
-import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat, setAiResChunks, setIsStreaming, finishStreaming, AddAiResChunks } from "../State/chatSlice";
+import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat, setAiResChunks, setIsStreaming, finishStreaming, AddAiResChunks, setSidebarOpen } from "../State/chatSlice";
 import { setChatError, setChatLoading } from "../../Chat/State/chatSlice.js";
 import { useEffect, useRef } from 'react';
 
@@ -141,12 +141,16 @@ const useChat = () => {
         return null;
     }
 
+    const setSidebarOpenHandler = (value) => {
+        dispatch(setSidebarOpen(value));
+    }
+
     const finishAnimationHandler = () => {
         // Called when typing animation completes
         dispatch(finishStreaming());
     }
 
-    return { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler, finishAnimationHandler }
+    return { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler, finishAnimationHandler, setSidebarOpenHandler }
 }
 
 export default useChat;

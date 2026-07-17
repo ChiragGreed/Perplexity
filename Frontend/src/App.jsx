@@ -1,5 +1,5 @@
 import React from 'react'
-import Dashboard from './Features/Chat/Components/Dashboard'
+import Dashboard from './Features/Chat/Pages/Dashboard'
 import Protected from './Features/Auth/Components/Protected'
 
 const App = () => {

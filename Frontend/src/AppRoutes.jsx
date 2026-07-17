@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./Features/Auth/Components/Register.jsx";
-import Dashboard from "./Features/Chat/Components/Dashboard.jsx";
 import App from "./App.jsx";
 import Login from "./Features/Auth/Components/Login.jsx";
 
