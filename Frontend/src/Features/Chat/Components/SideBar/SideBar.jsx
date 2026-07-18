@@ -3,13 +3,12 @@ import useChat from "../../Hooks/useChat";
 
 
 
-const SideBar = ({ setDisplayedText, openDeleteConfirm }) => {
+const SideBar = ({ startNewChatHandler, setSidebarOpenHandler, setActiveChatHandler, getMessagesHandler, setDisplayedText, openDeleteConfirm }) => {
     const { chats, currentChat, sidebarOpen } = useSelector((state) => state.chat);
-    const { startNewChatHandler, setSidebarOpenHandler, setActiveChatHandler, getMessagesHandler } = useChat();
 
     return <>
-        
-        
+
+
         {/* ── Mobile Sidebar Overlay ── */}
         {sidebarOpen && (
             <div

@@ -59,7 +59,7 @@ export const invokeAi = async (messages) => {
         }
     )
 
-    const systemPrompt = "You are a knowledgeable AI assistant. Always use your internal knowledge base to answer questions about history, science, fictional characters, and general facts. Only invoke the internet_Search tool if the user asks for breaking news, real-time data, or information past your knowledge cutoff date. Use the send_email tool for sending email to an email address";
+    const systemPrompt = "You are a knowledgeable AI assistant. Always use your internal knowledge base to answer questions about history, science, fictional characters, and general facts.Only invoke the internet_Search tool if the user asks for breaking news, real - time data, or information past your knowledge cutoff date. Use the send_email tool for sending email to an email address";
 
     const geminiAgent = createAgent({
         model: Geminimodel,
