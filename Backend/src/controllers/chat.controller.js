@@ -5,7 +5,7 @@ import { generateChatTitle, invokeAi } from "../services/ai.service.js";
 import { convertMessagesToMistralMessages } from "@langchain/mistralai";
 
 const query = async (req, res) => {
-    const { query, chatId } = req.body;
+    const { query, chatId, socketId } = req.body;
     const userId = req.user.userid;
 
     if (!query) return res.status(404).json({
@@ -35,7 +35,7 @@ const query = async (req, res) => {
 
     const allMessages = await messageModel.find({ chatId: chatId ? chatId : chat._id }).sort({ createdAt: 1 });
 
-    const AiResponse = await invokeAi(allMessages);
+    const AiResponse = await invokeAi(allMessages, socketId);
 
     const responseMessage = await messageModel.create({ chatId: chatId ? chatId : chat._id, content: AiResponse, role: 'ai' });
 

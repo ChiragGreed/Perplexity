@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const ChatFooter = ({ setDisplayedText, sendQueryHandler ,currentChat}) => {
+const ChatFooter = ({ setDisplayedText, sendQueryHandler, currentChat, socketId }) => {
     const quickPrompts = ["Summarize this thread", "Draft a launch email", "Suggest next steps"];
     const [draft, setDraft] = useState("");
 
@@ -10,7 +10,7 @@ const ChatFooter = ({ setDisplayedText, sendQueryHandler ,currentChat}) => {
         if (!trimmed) return;
 
         setDisplayedText(""); // Reset animation for new response
-        await sendQueryHandler(trimmed, currentChat?.id);
+        await sendQueryHandler(trimmed, currentChat?.id, socketId);
 
         setDraft("");
     };

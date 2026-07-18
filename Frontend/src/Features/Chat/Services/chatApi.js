@@ -5,8 +5,8 @@ const api = axios.create({
     withCredentials: true
 })
 
-export const sendQueryApi = async (query, chatId) => {
-    const response = await api.post('/query', { query, chatId });
+export const sendQueryApi = async (query, chatId, socketId) => {
+    const response = await api.post('/query', { query, chatId, socketId });
     return response.data;
 }
 

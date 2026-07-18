@@ -20,7 +20,7 @@ const Mistralmodel = new ChatMistralAI({
 });
 
 
-export const invokeAi = async (messages) => {
+export const invokeAi = async (messages, socket) => {
 
     const context = messages.map((msg) => {
         if (msg.role === 'user') {
@@ -72,7 +72,7 @@ export const invokeAi = async (messages) => {
 
     for await (const chunk of response) {
         if (chunk.event === 'on_chat_model_stream' && chunk.data?.chunk) {
-            io.emit('ResponseChunk', (chunk.data.chunk.content));
+            socket.emit('ResponseChunk', (chunk.data.chunk.content));
             finalResponse += chunk.data.chunk.content;
         }
     }

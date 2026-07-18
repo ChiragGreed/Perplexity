@@ -12,7 +12,7 @@ import ChatHeader from "../Components/ChatSection/ChatHeader";
 
 const Dashboard = () => {
     const { socketConnectionHandler, sendQueryHandler, startNewChatHandler, setSidebarOpenHandler, setActiveChatHandler, getMessagesHandler, getChatsHandler, deleteChatHandler, finishAnimationHandler } = useChat();
-    const { chats, currentChat, chatMessages, AIResChunks, isStreaming } = useSelector((state) => state.chat);
+    const { chats, currentChat, chatMessages, AIResChunks, isStreaming, socketId } = useSelector((state) => state.chat);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
 
@@ -93,7 +93,7 @@ const Dashboard = () => {
                 <ChatSection finishAnimationHandler={finishAnimationHandler} displayedText={displayedText} setDisplayedText={setDisplayedText} />
 
                 {/* ── Bottom Input Area ── */}
-                <ChatFooter setDisplayedText={setDisplayedText} sendQueryHandler={sendQueryHandler} currentChat={currentChat} />
+                <ChatFooter setDisplayedText={setDisplayedText} sendQueryHandler={sendQueryHandler} currentChat={currentChat} socketId={socketId} />
             </main >
 
             {/* ── Delete Confirmation Modal ── */}

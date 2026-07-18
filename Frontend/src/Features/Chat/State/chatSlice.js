@@ -21,6 +21,7 @@ export const chatSlice = createSlice({
         isStreaming: false,
         chatLoading: false,
         chatError: false,
+        socketId: null,
         sidebarOpen: false
     },
     reducers: {
@@ -84,11 +85,14 @@ export const chatSlice = createSlice({
         setChatError: (state, action) => {
             state.error = action.payload;
         },
+        setSocketId: (state, action) => {
+            state.error = action.payload;
+        },
         setSidebarOpen: (state, action) => {
             state.sidebarOpen = action.payload;
         }
     }
 })
 
-export const { setChats, AddNewChat, setCurrentChat, setChatMessages, AddNewChatMessage, AddAiResChunks, setAiResChunks, setIsStreaming, finishStreaming, deleteChat, setChatLoading, setChatError, setSidebarOpen } = chatSlice.actions;
+export const { setChats, AddNewChat, setCurrentChat, setChatMessages, AddNewChatMessage, AddAiResChunks, setAiResChunks, setIsStreaming, finishStreaming, deleteChat, setChatLoading, setChatError, setSocketId, setSidebarOpen } = chatSlice.actions;
 export default chatSlice.reducer;

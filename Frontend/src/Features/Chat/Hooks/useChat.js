@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import { deleteChatAPi, getChatsAPi, getMessagesApi, sendQueryApi } from "../Services/chatApi";
 import { useDispatch, useSelector } from 'react-redux';
-import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat, setAiResChunks, setIsStreaming, finishStreaming, AddAiResChunks, setSidebarOpen } from "../State/chatSlice";
+import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat, setAiResChunks, setIsStreaming, finishStreaming, AddAiResChunks, setSocketId, setSidebarOpen } from "../State/chatSlice";
 import { setChatError, setChatLoading } from "../../Chat/State/chatSlice.js";
 import { useEffect, useRef } from 'react';
 
@@ -18,6 +18,7 @@ const useChat = () => {
 
         socket.on('connect', () => {
             console.log('Connected to server');
+            dispatch(setSocketId(socket.id));
         })
 
         socket.on('ResponseChunk', (chunk) => {
@@ -40,7 +41,7 @@ const useChat = () => {
         }]));
     }
 
-    const sendQueryHandler = async (query, chatId) => {
+    const sendQueryHandler = async (query, chatId, socketId) => {
 
         dispatch(setChatLoading(true));
         dispatch(setAiResChunks(''));
@@ -58,7 +59,7 @@ const useChat = () => {
 
         try {
 
-            const res = await sendQueryApi(query, chatId);
+            const res = await sendQueryApi(query, chatId, socketId);
             const createdChat = res?.chat;
 
             if (!chatId && createdChat?._id) {
