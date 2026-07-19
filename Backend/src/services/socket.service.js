@@ -6,7 +6,7 @@ const initializeSocketio = (httpServer) => {
 
     io = new Server(httpServer, {
         cors: {
-            origin: 'https://askbase-qv8j.onrender.com',
+            origin: 'https://askbase-h11j.onrender.com',
             credentials: true
         }
     })

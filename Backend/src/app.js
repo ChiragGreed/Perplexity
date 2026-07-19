@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, '../', '/public/dist')));
 
 app.use(cookieParser());
 app.use(cors({
-    origin: 'https://askbase-qv8j.onrender.com',
+    origin: 'https://askbase-h11j.onrender.com',
     credentials: true
 }));
 

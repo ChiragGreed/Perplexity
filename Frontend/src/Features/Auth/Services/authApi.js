@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://askbase-qv8j.onrender.com/api/auth',
+    baseURL: 'https://askbase-h11j.onrender.com/api/auth',
     withCredentials: true
 });
 
