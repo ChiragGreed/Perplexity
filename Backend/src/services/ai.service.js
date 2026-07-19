@@ -72,7 +72,7 @@ export const invokeAi = async (messages, socket) => {
 
     for await (const chunk of response) {
         if (chunk.event === 'on_chat_model_stream' && chunk.data?.chunk) {
-            socket.emit('ResponseChunk', (chunk.data.chunk.content));
+            io.to(socket).emit('ResponseChunk', (chunk.data.chunk.content));
             finalResponse += chunk.data.chunk.content;
         }
     }

@@ -35,7 +35,7 @@ const query = async (req, res) => {
 
     const allMessages = await messageModel.find({ chatId: chatId ? chatId : chat._id }).sort({ createdAt: 1 });
 
-    const AiResponse = await invokeAi(allMessages, socketId);
+    const AiResponse = await invokeAi(allMessages,socketId);
 
     const responseMessage = await messageModel.create({ chatId: chatId ? chatId : chat._id, content: AiResponse, role: 'ai' });
 

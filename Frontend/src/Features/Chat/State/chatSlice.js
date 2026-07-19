@@ -86,7 +86,7 @@ export const chatSlice = createSlice({
             state.error = action.payload;
         },
         setSocketId: (state, action) => {
-            state.error = action.payload;
+            state.socketId = action.payload;
         },
         setSidebarOpen: (state, action) => {
             state.sidebarOpen = action.payload;
