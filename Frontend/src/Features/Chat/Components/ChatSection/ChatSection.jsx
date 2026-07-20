@@ -6,6 +6,7 @@ import useChat from '../../Hooks/useChat';
 
 const ChatSection = ({ finishAnimationHandler, displayedText, setDisplayedText }) => {
     const messagesContainerRef = useRef(null);
+    const animationCompleteRef = useRef(false);
     const { chatMessages, currentChat, AIResChunks, isStreaming } = useSelector((state) => state.chat);
 
 
@@ -20,6 +21,7 @@ const ChatSection = ({ finishAnimationHandler, displayedText, setDisplayedText }
     useEffect(() => {
         if (!isStreaming) {
             setDisplayedText("");
+            animationCompleteRef.current = false;
             return;
         }
 
@@ -28,8 +30,9 @@ const ChatSection = ({ finishAnimationHandler, displayedText, setDisplayedText }
                 setDisplayedText(AIResChunks.content.substring(0, displayedText.length + 1));
             }, 0.010); // Adjust speed here (lower = faster)
             return () => clearTimeout(timer);
-        } else if (AIResChunks.content.length > 0 && displayedText.length === AIResChunks.content.length && isStreaming) {
+        } else if (AIResChunks.content.length > 0 && displayedText.length === AIResChunks.content.length && isStreaming && !animationCompleteRef.current) {
             // Animation complete - finish streaming and move to chatMessages
+            animationCompleteRef.current = true;
             finishAnimationHandler();
         }
     }, [displayedText, AIResChunks.content, isStreaming, finishAnimationHandler]);

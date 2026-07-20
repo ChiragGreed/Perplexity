@@ -20,6 +20,7 @@ const Dashboard = () => {
 
     const [displayedText, setDisplayedText] = useState("");
     const messagesContainerRef = useRef(null);
+    const animationCompleteRef = useRef(false);
 
     useEffect(() => {
         socketConnectionHandler();
@@ -29,6 +30,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (!isStreaming) {
             setDisplayedText("");
+            animationCompleteRef.current = false;
             return;
         }
 
@@ -37,8 +39,9 @@ const Dashboard = () => {
                 setDisplayedText(AIResChunks.content.substring(0, displayedText.length + 1));
             }, 0.00010); // Adjust speed here (lower = faster)
             return () => clearTimeout(timer);
-        } else if (AIResChunks.content.length > 0 && displayedText.length === AIResChunks.content.length && isStreaming) {
+        } else if (AIResChunks.content.length > 0 && displayedText.length === AIResChunks.content.length && isStreaming && !animationCompleteRef.current) {
             // Animation complete - finish streaming and move to chatMessages
+            animationCompleteRef.current = true;
             finishAnimationHandler();
         }
     }, [displayedText, AIResChunks.content, isStreaming, finishAnimationHandler]);

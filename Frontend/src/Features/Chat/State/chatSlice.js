@@ -57,7 +57,7 @@ export const chatSlice = createSlice({
         },
         finishStreaming: (state, action) => {
             // Move AIResChunks to chatMessages and reset
-            if (state.AIResChunks.content.trim()) {
+            if (state.AIResChunks.content.trim() && state.isStreaming) {
                 const formattedDate = new Intl.DateTimeFormat('en-IN', {
                     month: 'long',
                     day: 'numeric',

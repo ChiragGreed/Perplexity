@@ -3,7 +3,7 @@ import { deleteChatAPi, getChatsAPi, getMessagesApi, sendQueryApi } from "../Ser
 import { useDispatch, useSelector } from 'react-redux';
 import { AddNewChat, AddNewChatMessage, setChatMessages, setChats, setCurrentChat, deleteChat, setAiResChunks, setIsStreaming, finishStreaming, AddAiResChunks, setSocketId, setSidebarOpen } from "../State/chatSlice";
 import { setChatError, setChatLoading } from "../../Chat/State/chatSlice.js";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 const useChat = () => {
 
@@ -39,6 +39,8 @@ const useChat = () => {
             time: null,
             role: null,
         }]));
+        dispatch(setAiResChunks(''));
+        dispatch(setIsStreaming(false));
     }
 
     const sendQueryHandler = async (query, chatId, socketId) => {
@@ -146,10 +148,10 @@ const useChat = () => {
         dispatch(setSidebarOpen(value));
     }
 
-    const finishAnimationHandler = () => {
+    const finishAnimationHandler = useCallback(() => {
         // Called when typing animation completes
         dispatch(finishStreaming());
-    }
+    }, [dispatch]);
 
     return { socketConnectionHandler, startNewChatHandler, sendQueryHandler, getChatsHandler, setActiveChatHandler, getMessagesHandler, deleteChatHandler, finishAnimationHandler, setSidebarOpenHandler }
 }
